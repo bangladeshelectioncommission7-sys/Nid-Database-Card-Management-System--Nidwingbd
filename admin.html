@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin</title>
+</head>
+<body>
+
+<h2>Send Notice</h2>
+
+<input id="userId" placeholder="User ID"><br><br>
+<textarea id="msg"></textarea><br><br>
+
+<button onclick="send()">Send</button>
+
+<script>
+function send(){
+  fetch("/api/notice", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      userId: document.getElementById("userId").value,
+      message: document.getElementById("msg").value
+    })
+  })
+  .then(()=>alert("Notice Sent"));
+}
+</script>
+
+</body>
+</html>

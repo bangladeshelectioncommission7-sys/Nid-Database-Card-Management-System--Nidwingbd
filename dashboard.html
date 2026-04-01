@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+
+<h2>Your Notice</h2>
+<div id="notice">Loading...</div>
+
+<script>
+const userId = localStorage.getItem("userId");
+
+fetch(`/api/notice?userId=${userId}`)
+.then(res => res.json())
+.then(data => {
+  document.getElementById("notice").innerText = data.message;
+});
+</script>
+
+</body>
+</html>
