@@ -1,16 +1,9 @@
-                const cancelBtn = el('cancelBtn');
-                const rollbackBtn = el('rollbackBtn');
-                const downloadPdfBtn = el('downloadPdfBtn');
-                const loader = el('detailLoader');
-                const msg = el('detailMsg');
-
-                msg.style.display = 'none';
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>NID Correction Portal — Official</title>
+    <title>NID Correction Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root{--blue:#0b63b6;--muted:#6b7b8f;--card-bg:#fff}
@@ -19,7 +12,6 @@
         header{background:var(--blue);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
         header .brand{font-weight:700;font-size:18px}
         .container{max-width:1120px;margin:20px auto;padding:0 16px}
-        .card{background:var(--card-bg);border-radius:10px;box-shadow:0 8px 30px rgba(11,38,71,0.06);overflow:hidden}
         .muted{color:var(--muted);font-size:13px}
         .app-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--blue);color:#fff;border-radius:8px 8px 0 0}
         .panel{background:#fff;padding:18px;border-radius:0 0 8px 8px}
@@ -43,7 +35,7 @@
         @keyframes spin{to{transform:rotate(360deg)}}
         .msg-success{color:#0b7028;font-weight:700;margin-top:12px}
         .msg-info{color:#0b63b6;font-weight:700;margin-top:12px}
-        .msg-error{color:#8a1f1f;font-weight:700;margin-top:12px}
+        .msg-error{color:#8a1f1f;font-weight:700;margin-top:12px; font-size:15px;}
         .controls{display:flex;gap:10px;align-items:center}
         .back-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
         .footer-note{font-size:13px;color:var(--muted);margin-top:10px}
@@ -66,7 +58,6 @@
         .btn { padding: 10px 18px; border-radius: 8px; border: none; font-weight: 500; cursor: pointer; transition: all 0.2s; background: var(--blue); color: white; }
         .btn.secondary { background: #eef4ff; color: var(--blue); border: 1px solid #d6e4ff; }
         .btn.secondary:hover { background: #dbe9ff; }
-        @media (max-width: 640px) { .auth-box { max-width: 94%; } }
     </style>
 </head>
 <body>
@@ -119,7 +110,6 @@
                     </div>
                 </div>
                 <div style="display:flex;gap:12px;align-items:center">
-                    <div id="loggedUser" class="muted" style="display:none"></div>
                     <button class="btn" id="logoutBtn" style="display:none">Logout</button>
                 </div>
             </div>
@@ -190,7 +180,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // ================== আপনার ছবি অনুসারে আপডেটেড ডাটা ==================
+            // ================== সঠিক তথ্য (ছবি অনুসারে) ==================
             const BASE_CURRENT = {
                 name: 'নুসরাত জাহান',
                 nid: '',
@@ -199,9 +189,6 @@
                 'স্বামী বা স্ত্রীর নাম': '',
                 'স্বামী বা স্ত্রীর NID নম্বর': ''
             };
-
-            const CATEGORY_LIST = ['Kha'];
-            sessionStorage.setItem('ec_selected_category', sessionStorage.getItem('ec_selected_category') || 'Kha');
 
             function storageKey(n) { return 'ec_nid_' + n }
             function saveState(n, o) { localStorage.setItem(storageKey(n), JSON.stringify(o)); }
@@ -233,8 +220,6 @@
                     el('searchBtn').textContent = prev;
 
                     let st = loadState(nid);
-                    const selCat = sessionStorage.getItem('ec_selected_category') || 'Kha';
-
                     if (!st) {
                         const current = JSON.parse(JSON.stringify(BASE_CURRENT));
                         current.nid = nid;
@@ -246,16 +231,15 @@
                             'স্বামী বা স্ত্রীর NID নম্বর': '8711565146'
                         };
 
-                        const requests = [];
-                        requests.push({
+                        const requests = [{
                             id: uuid(),
-                            category: selCat,
+                            category: 'Kha',
                             status: 'Pending',
                             oldValues: JSON.parse(JSON.stringify(current)),
                             newValues: newValues,
                             notes: 'সংশোধনের অনুরোধ',
                             previousApplied: null
-                        });
+                        }];
 
                         st = { current, requests };
                         saveState(nid, st);
@@ -272,7 +256,6 @@
                 tbody.innerHTML = '';
                 state.requests.forEach((r, idx) => {
                     const tr = document.createElement('tr');
-                    const nameDisplay = state.current.name || 'N/A';
                     let statusClass = 'status-pending';
                     if (r.status.includes('Approved')) statusClass = 'status-approved';
                     else if (r.status === 'Rejected') statusClass = 'status-rejected';
@@ -280,7 +263,7 @@
                     tr.innerHTML = `
                         <td><input type="checkbox"/></td>
                         <td class="muted">${r.id}</td>
-                        <td>${nameDisplay}</td>
+                        <td>${state.current.name || 'N/A'}</td>
                         <td>${nid}</td>
                         <td><span class="status-chip ${statusClass}">${r.status}</span></td>
                         <td>${r.category}</td>
@@ -308,7 +291,6 @@
                 el('detailTitle').textContent = 'Application Details';
                 el('detailMeta').textContent = `ID: ${req.id} | Category: ${req.category}`;
 
-                // ================== ছবি অনুসারে ফিল্ড আপডেট ==================
                 const fields = [
                     { label: 'মাতার নাম (বাংলা)', key: 'মাতার নাম' },
                     { label: 'বৈবাহিক অবস্থা', key: 'বৈবাহিক অবস্থা' },
@@ -318,12 +300,12 @@
 
                 const tbody = el('detailRows');
                 tbody.innerHTML = '';
-                fields.forEach((f, i) => {
+                fields.forEach(f => {
                     const oldV = req.oldValues[f.key] || '-';
                     const newV = req.newValues[f.key] || '-';
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td style="text-align:center"><input type="checkbox" ${i < 4 ? 'checked' : ''}></td>
+                        <td style="text-align:center"><input type="checkbox" checked></td>
                         <td>${f.label}</td>
                         <td>${oldV}</td>
                         <td>${newV}</td>
@@ -331,41 +313,22 @@
                     tbody.appendChild(tr);
                 });
 
-                el('detailNote').textContent = req.notes ? `Notes: ${req.notes}` : 'Notes: none';
+                el('detailNote').textContent = `Notes: ${req.notes || 'none'}`;
 
                 const approveBtn = el('approveBtn');
                 const cancelBtn = el('cancelBtn');
                 const rollbackBtn = el('rollbackBtn');
-                const downloadPdfBtn = el('downloadPdfBtn');
                 const loader = el('detailLoader');
                 const msg = el('detailMsg');
 
                 msg.style.display = 'none';
                 loader.style.display = 'none';
-                approveBtn.disabled = false;
-                cancelBtn.disabled = false;
 
-                if (req.status.includes('Approved')) {
-                    approveBtn.style.display = 'none';
-                    cancelBtn.style.display = 'none';
-                    rollbackBtn.style.display = 'inline-block';
-                    msg.style.display = 'block';
-                    msg.className = 'msg-success';
-                    msg.textContent = 'এই জাতীয় পরিচয় পত্র সংশোধনটি অনুমোদিত হয়েছে।';
-                } else if (req.status === 'Rejected') {
-                    approveBtn.style.display = 'none';
-                    cancelBtn.style.display = 'none';
-                    rollbackBtn.style.display = 'inline-block';
-                    msg.style.display = 'block';
-                    msg.className = 'msg-info';
-                    msg.textContent = 'এই আবেদন প্রত্যাখ্যাত হয়েছে।';
-                } else {
-                    approveBtn.style.display = 'inline-block';
-                    cancelBtn.style.display = 'inline-block';
-                    rollbackBtn.style.display = 'none';
-                }
+                approveBtn.style.display = 'inline-block';
+                cancelBtn.style.display = 'inline-block';
+                rollbackBtn.style.display = 'none';
 
-                // ================== অনুমোদন বাটন - লাল মেসেজ ==================
+                // ================== Approve Button - লাল মেসেজ ==================
                 approveBtn.onclick = () => {
                     approveBtn.disabled = true;
                     cancelBtn.disabled = true;
@@ -375,9 +338,8 @@
                         loader.style.display = 'none';
                         msg.style.display = 'block';
                         msg.className = 'msg-error';
-                        msg.textContent = 'দুঃখিত আপনি এটি অনুমোদন করতে পারবেন না, আবেদনকারীর ডাটাবেইজ এ JSC মার্কশিট দিয়ে ভোটার হওয়ার এটি অনুমোদন দিতে, আপনাকে তদন্ত দিয়ে তারপর অনুমোদন করতে হবে।';
+                        msg.innerHTML = 'দুঃখিত আপনি এটি অনুমোদন করতে পারবেন না, আবেদনকারীর ডাটাবেইজ এ JSC মার্কশিট দিয়ে ভোটার হওয়ার এটি অনুমোদন দিতে, আপনাকে তদন্ত দিয়ে তারপর অনুমোদন করতে হবে।';
                         
-                        // Approve বাটন লুকিয়ে রাখা হলো না, যাতে আবার চেষ্টা করতে পারে
                         approveBtn.disabled = false;
                         cancelBtn.disabled = false;
                     }, 800);
@@ -385,70 +347,13 @@
 
                 cancelBtn.onclick = () => {
                     if (!confirm('আবেদনটি প্রত্যাখ্যান করতে চান?')) return;
-                    approveBtn.disabled = true;
-                    cancelBtn.disabled = true;
-                    loader.style.display = 'inline-block';
-
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                        state.requests[idx].status = 'Rejected';
-                        saveState(nid, state);
-                        msg.style.display = 'block';
-                        msg.className = 'msg-info';
-                        msg.textContent = 'আবেদনটি প্রত্যাখ্যাত হয়েছে।';
-                        approveBtn.style.display = 'none';
-                        cancelBtn.style.display = 'none';
-                        rollbackBtn.style.display = 'inline-block';
-                        renderResults(nid, state);
-                    }, 900);
-                };
-
-                rollbackBtn.onclick = () => {
-                    loader.style.display = 'inline-block';
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                        if (req.previousApplied) {
-                            state.current = JSON.parse(JSON.stringify(req.previousApplied));
-                            req.previousApplied = null;
-                        }
-                        state.requests[idx].status = 'Pending';
-                        saveState(nid, state);
-                        msg.style.display = 'block';
-                        msg.className = 'msg-info';
-                        msg.textContent = 'পূর্বের অবস্থায় ফিরিয়ে আনা হয়েছে।';
-                        approveBtn.style.display = 'inline-block';
-                        cancelBtn.style.display = 'inline-block';
-                        rollbackBtn.style.display = 'none';
-                        renderResults(nid, state);
-                    }, 900);
-                };
-
-                downloadPdfBtn.onclick = () => {
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF();
-                    doc.setFont("helvetica");
-                    doc.setFontSize(12);
-                    doc.text("NID Correction Details", 10, 10);
-                    doc.text(`ID: ${req.id}`, 10, 20);
-                    doc.text(`Category: ${req.category}`, 10, 30);
-                    doc.text(`Notes: ${req.notes || 'none'}`, 10, 40);
-                    doc.autoTable({
-                        html: '#detailRows',
-                        startY: 50,
-                        head: [['', 'Field', 'Old Value', 'New Value']],
-                        theme: 'grid',
-                    });
-                    doc.save(`NID_${nid}_Correction.pdf`);
+                    // Reject logic (চাইলে পরে ব্যবহার করতে পারবেন)
+                    alert('আবেদনটি প্রত্যাখ্যাত হয়েছে।');
                 };
 
                 el('backToMain').onclick = () => {
                     el('detailPage').style.display = 'none';
                     el('appArea').style.display = 'block';
-                    const n = sessionStorage.getItem('ec_last_nid');
-                    if (n) {
-                        const s = loadState(n);
-                        if (s) renderResults(n, s);
-                    }
                 };
             }
 
@@ -459,47 +364,29 @@
                 if (p) p.type = p.type === "password" ? "text" : "password";
             }
 
-            const loginBtn = el("loginBtn");
-            if (loginBtn) {
-                loginBtn.onclick = function() {
-                    const uid = el("userId").value.trim();
-                    const pass = el("userPass").value.trim();
-                    if (!uid || !pass) {
-                        alert("ইউজার আইডি ও পাসওয়ার্ড দিন");
-                        return;
-                    }
-                    this.textContent = "যাচাই হচ্ছে...";
-                    this.classList.add("loading");
-                    setTimeout(() => {
-                        el("loginSection").style.display = "none";
-                        el("otpSection").style.display = "block";
-                        this.textContent = "লগইন করুন";
-                        this.classList.remove("loading");
-                    }, 1400);
-                };
-            }
+            el("loginBtn").onclick = function() {
+                const uid = el("userId").value.trim();
+                const pass = el("userPass").value.trim();
+                if (!uid || !pass) return alert("ইউজার আইডি ও পাসওয়ার্ড দিন");
+                this.textContent = "যাচাই হচ্ছে...";
+                this.classList.add("loading");
+                setTimeout(() => {
+                    el("loginSection").style.display = "none";
+                    el("otpSection").style.display = "block";
+                    this.textContent = "লগইন করুন";
+                    this.classList.remove("loading");
+                }, 1400);
+            };
 
-            const verifyOtpBtn = el("verifyOtpBtn");
-            if (verifyOtpBtn) {
-                verifyOtpBtn.onclick = function() {
-                    const otp = el("otpInput").value.trim();
-                    if (otp !== FIXED_OTP) {
-                        alert("ভুল OTP কোড");
-                        return;
-                    }
-                    el("authWrapper").style.display = "none";
-                    el("mainHeader").style.display = "flex";
-                    el("mainContainer").style.display = "block";
-                    el("logoutBtn").style.display = "block";
-                };
-            }
+            el("verifyOtpBtn").onclick = function() {
+                if (el("otpInput").value.trim() !== FIXED_OTP) return alert("ভুল OTP কোড");
+                el("authWrapper").style.display = "none";
+                el("mainHeader").style.display = "flex";
+                el("mainContainer").style.display = "block";
+                el("logoutBtn").style.display = "block";
+            };
 
-            const logoutBtn = el("logoutBtn");
-            if (logoutBtn) {
-                logoutBtn.onclick = function() {
-                    location.reload();
-                };
-            }
+            el("logoutBtn").onclick = () => location.reload();
         });
     </script>
 </body>
