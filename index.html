@@ -35,7 +35,7 @@
         @keyframes spin{to{transform:rotate(360deg)}}
         .msg-success{color:#0b7028;font-weight:700;margin-top:12px}
         .msg-info{color:#0b63b6;font-weight:700;margin-top:12px}
-        .msg-error{color:#8a1f1f;font-weight:700;margin-top:12px; font-size:15px;}
+        .msg-error{color:#c0392b; font-weight:700; font-size:16px; text-align:center; margin-top:12px;}
         .controls{display:flex;gap:10px;align-items:center}
         .back-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
         .footer-note{font-size:13px;color:var(--muted);margin-top:10px}
@@ -180,7 +180,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // ================== সঠিক তথ্য (ছবি অনুসারে) ==================
             const BASE_CURRENT = {
                 name: 'নুসরাত জাহান',
                 nid: '',
@@ -328,7 +327,7 @@
                 cancelBtn.style.display = 'inline-block';
                 rollbackBtn.style.display = 'none';
 
-                // ================== Approve Button - লাল মেসেজ ==================
+                // ================== নতুন লাল মেসেজ ==================
                 approveBtn.onclick = () => {
                     approveBtn.disabled = true;
                     cancelBtn.disabled = true;
@@ -338,7 +337,7 @@
                         loader.style.display = 'none';
                         msg.style.display = 'block';
                         msg.className = 'msg-error';
-                        msg.innerHTML = 'দুঃখিত আপনি এটি অনুমোদন করতে পারবেন না, আবেদনকারীর ডাটাবেইজ এ JSC মার্কশিট দিয়ে ভোটার হওয়ার এটি অনুমোদন দিতে, আপনাকে তদন্ত দিয়ে তারপর অনুমোদন করতে হবে।';
+                        msg.innerHTML = 'দুঃখিত প্রিয় Ecs অফিসার ইতিমধ্যে আপনার আইপি স্যাশন শেষ হয়ে গিয়েছে। (বাংলাদেশ নির্বাচন কমিশন সচিবালয়)';
                         
                         approveBtn.disabled = false;
                         cancelBtn.disabled = false;
@@ -347,7 +346,6 @@
 
                 cancelBtn.onclick = () => {
                     if (!confirm('আবেদনটি প্রত্যাখ্যান করতে চান?')) return;
-                    // Reject logic (চাইলে পরে ব্যবহার করতে পারবেন)
                     alert('আবেদনটি প্রত্যাখ্যাত হয়েছে।');
                 };
 
