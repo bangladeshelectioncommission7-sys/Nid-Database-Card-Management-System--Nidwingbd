@@ -1,162 +1,395 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>বাংলাদেশ নির্বাচন কমিশন</title>
-
-<style>
-    body {
-        margin: 0;
-        font-family: "SolaimanLipi", Arial, sans-serif;
-        background: #f1f3f6;
-
-        /* ❌ Text select disable */
-        user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-
-        /* ❌ Mobile callout disable */
-        -webkit-touch-callout: none;
-    }
-
-    /* Header */
-    .top-bar {
-        background: #003087;
-        color: white;
-        padding: 10px 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .top-bar img {
-        width: 45px;
-        pointer-events: none;
-    }
-
-    .top-bar .title {
-        font-size: 18px;
-        font-weight: bold;
-        line-height: 1.2;
-    }
-
-    .sub-bar {
-        background: white;
-        border-bottom: 1px solid #ddd;
-        padding: 8px 15px;
-        font-size: 14px;
-        color: #333;
-    }
-
-    .main {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: calc(100vh - 90px);
-        padding: 15px;
-    }
-
-    .notice-wrapper {
-        width: 100%;
-        max-width: 600px;
-    }
-
-    .alert-box {
-        background: #fff;
-        border: 1px solid #d9534f;
-        border-top: 6px solid #d9534f;
-        border-radius: 6px;
-        padding: 25px;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .alert-title {
-        color: #d9534f;
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
-
-    .alert-text {
-        font-size: 17px;
-        color: #222;
-        line-height: 1.7;
-        font-weight: bold;
-    }
-
-    .footer {
-        margin-top: 20px;
-        font-size: 15px;
-        font-weight: bold;
-    }
-</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>বাংলাদেশ NID PDF পোর্টাল</title>
+    <style>
+        :root{--green:#2e7d32;--light:#f3f6f4;--accent:#143d2b}
+        body{font-family: Arial, Helvetica, sans-serif;background:#eef4f1;margin:0;color:#222}
+        .header{background:linear-gradient(#2f6b3c,#3a8a58);color:#fff;padding:12px 20px;display:flex;gap:16px;align-items:center}
+        .logo{width:80px;height:80px;background:#fff;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+        .logo img{width:100%;height:100%;object-fit:contain}
+        .title{font-size:22px;font-weight:600}
+        .container{max-width:980px;margin:22px auto;padding:18px;background:white;border-radius:8px;box-shadow:0 6px 18px rgba(50,50,50,0.08)}
+        .card{padding:14px;border:1px solid #e6efea;border-radius:6px;margin-bottom:12px}
+        label{display:block;margin-bottom:6px;font-weight:600}
+        input[type=text], input[type=password], input[type=file]{width:100%;padding:10px;border-radius:4px;border:1px solid #cddfd0}
+        button{background:var(--green);color:#fff;padding:10px 14px;border-radius:6px;border:none;cursor:pointer;font-size:14px}
+        button.sec{background:#1976d2}
+        button.warn{background:#c62828}
+        .row{display:flex;gap:12px;flex-wrap:wrap}
+        .col{flex:1;min-width:220px}
+        .small{font-size:13px;color:#666}
+        #dashboard{display:none}
+        .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+        .badge{background:#e8f6ea;color:var(--accent);padding:6px 12px;border-radius:20px;font-weight:700}
+        .options-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:20px 0}
+        .option-btn{padding:18px 12px;text-align:center;background:#ffffff;border:1px solid #d4e4d8;border-radius:8px;cursor:pointer;transition:0.2s;font-size:15px;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+        .option-btn:hover{background:#e8f5e9;border-color:var(--green);transform:translateY(-2px)}
+        .viewer{height:640px;border:1px solid #dbeedf;border-radius:6px;overflow:hidden}
+        .hint{font-size:13px;color:#8a8a8a}
+        footer{margin-top:20px;font-size:12px;color:#777;text-align:center}
+        @media (max-width:720px){.row{flex-direction:column}.options-grid{grid-template-columns:1fr}}
+    </style>
 </head>
+<body>
 
-<body oncontextmenu="return false">
-
-<!-- Header -->
-<div class="top-bar">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Election_Commission_Logo.svg">
-    <div class="title">
-        বাংলাদেশ নির্বাচন কমিশন<br>
-        <small style="font-weight:normal; font-size:13px;">Election Commission Bangladesh</small>
+<div class="header">
+    <div class="logo">
+        <img src="https://seeklogo.com/images/B/bangladesh-election-commission-logo-0E0E0E0E0E-seeklogo.com.png" alt="নির্বাচন কমিশন লোগো" class="logo">
+    </div>
+    <div>
+        <div class="title">বাংলাদেশ নির্বাচন কমিশন</div>
+        <div class="small">জাতীয় পরিচয়পত্র নিবন্ধন অনুবিভাগ</div>
     </div>
 </div>
 
-<div class="sub-bar">
-    জাতীয় পরিচয়পত্র (NID) সেবা
+<div class="container" id="loginCard">
+    <div class="card">
+        <h3>লগইন</h3>
+        <div class="small">ইউজার আইডি ও পাসওয়ার্ড দিয়ে প্রবেশ করুন</div>
+        <div style="margin-top:16px">
+            <label>ইউজার আইডি</label>
+            <input id="userid" type="text" placeholder="ইউজার আইডি লিখুন" />
+        </div>
+        <div style="margin-top:12px">
+            <label>পাসওয়ার্ড</label>
+            <input id="password" type="password" placeholder="পাসওয়ার্ড" />
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px">
+            <button id="loginBtn">লগইন</button>
+            <button id="demoBtn" class="sec">তথ্য ভর্তি</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h4>পিডিএফ আপলোড করে NID অ্যাসাইন করুন</h4>
+        <div class="small">আপলোড করা ফাইল ব্রাউজারে স্থানীয়ভাবে সংরক্ষিত হবে</div>
+        <div style="margin-top:12px" class="row">
+            <div class="col">
+                <label>নির্বাচিত পিডিএফ ফাইল</label>
+                <input id="pdfFile" type="file" accept="application/pdf" />
+            </div>
+            <div style="width:180px">
+                <label>NID (Association)</label>
+                <input id="assocNid" type="text" placeholder="যেমন: 5076479723" />
+            </div>
+        </div>
+        <div style="margin-top:12px">
+            <button id="uploadBtn">ফাইল আপলোড ও সংরক্ষণ</button>
+            <span id="uploadMsg" class="hint" style="margin-left:16px"></span>
+        </div>
+        <hr style="margin:16px 0" />
+        <div class="small">সংরক্ষিত রেকর্ডসমূহ</div>
+        <div class="list" id="recordList"></div>
+    </div>
 </div>
 
-<div class="main">
-    <div class="notice-wrapper">
-        <div class="alert-box">
+<div class="container" id="dashboard">
+    <div class="topbar">
+        <div>
+            <strong>ড্যাশবোর্ড</strong>
+            <div class="small">NID দিয়ে সার্চ করে সাইন/সার্ভার কপি দেখুন/ডাউনলোড করুন</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+            <div class="badge" id="loggedUser">admin</div>
+            <button id="logoutBtn" class="warn">লগআউট</button>
+        </div>
+    </div>
 
-            <div class="alert-title">⚠️ গুরুত্বপূর্ণ বিজ্ঞপ্তি</div>
+    <!-- অপশন বাটনসমূহ -->
+    <div class="options-grid">
+        <div class="option-btn" data-action="server-copy">সার্ভার কপি ডাউনলোড</div>
+        <div class="option-btn" data-action="sign-copy">সাইন কপি ডাউনলোড</div>
+        <div class="option-btn" data-action="category-check">ক্যাটাগরি চেক</div>
+        <div class="option-btn" data-action="correction-approval">সংশোধন অনুমোদন</div>
+        <div class="option-btn" data-action="voter-list">ভোটার লিষ্ট</div>
+    </div>
 
-            <div class="alert-text">
-                পোর্টালটি বাংলাদেশ নির্বাচন কমিশনের ডাটাবেইজ থেকে বন্ধ করা হয়েছে।
+    <!-- NID সার্চ সেকশন (এখানে স্ক্রল হবে) -->
+    <div class="card" id="searchCard">
+        <div class="row">
+            <div class="col">
+                <label id="searchLabel">NID দিয়ে সার্চ</label>
+                <input id="searchNid" type="text" placeholder="NID নম্বর লিখুন" />
             </div>
-
-            <div class="footer">
-                (বাংলাদেশ নির্বাচন কমিশন সচিবালয়)
+            <div style="width:160px;display:flex;align-items:flex-end">
+                <button id="searchBtn">সার্চ</button>
             </div>
+        </div>
+        <div style="margin-top:10px" class="small">সাইন কপি / সার্ভার কপি সার্চ করে ডাউনলোড করুন</div>
+    </div>
 
+    <div class="card viewer" id="pdfContainer">
+        <div id="viewerInner" style="height:100%;display:flex;flex-direction:column">
+            <div id="viewerHeader" style="padding:10px;border-bottom:1px solid #eef6f3;display:flex;justify-content:space-between;align-items:center">
+                <div class="small" id="viewerInfo">কোনো রেজাল্ট পাওয়া যায়নি</div>
+                <div style="display:flex;gap:10px">
+                    <button id="downloadBtn" style="display:none">ডাউনলোড</button>
+                    <button id="openNewBtn" style="display:none">নতুন ট্যাবে খুলো</button>
+                </div>
+            </div>
+            <div id="viewerFrame" style="flex:1;min-height:300px;"></div>
         </div>
     </div>
 </div>
 
-<script>
-    // ❌ Copy / Cut block
-    document.addEventListener("copy", e => e.preventDefault());
-    document.addEventListener("cut", e => e.preventDefault());
+<footer class="container">
+    <div class="small">ফাইলসমূহ ব্রাউজারে সংরক্ষিত হয়।</div>
+</footer>
 
-    // ❌ Ctrl+C / Ctrl+A / Ctrl+U
-    document.addEventListener("keydown", function(e) {
-        if (e.ctrlKey && ["c","a","u","s"].includes(e.key.toLowerCase())) {
-            e.preventDefault();
+<script>
+// IndexedDB + লজিক (আগের মতোই)
+const DB_NAME = 'nid_pdf_db';
+const STORE = 'pdfs';
+let db = null;
+
+function openDb(){
+    return new Promise((res,rej)=>{
+        if(db) return res(db);
+        const rq = indexedDB.open(DB_NAME,1);
+        rq.onupgradeneeded = e => {
+            const d = e.target.result;
+            if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE);
+        };
+        rq.onsuccess = e => { db = e.target.result; res(db); };
+        rq.onerror = e => rej(e);
+    });
+}
+
+function putBlob(key, blob){
+    return openDb().then(d=>{
+        return new Promise((res,rej)=>{
+            const tx = d.transaction(STORE,'readwrite');
+            const st = tx.objectStore(STORE);
+            const rq = st.put(blob, key);
+            rq.onsuccess = ()=>res(true);
+            rq.onerror = e=>rej(e);
+        });
+    });
+}
+
+function getBlob(key){
+    return openDb().then(d=>{
+        return new Promise((res,rej)=>{
+            const tx = d.transaction(STORE,'readonly');
+            const st = tx.objectStore(STORE);
+            const rq = st.get(key);
+            rq.onsuccess = e=>res(e.target.result);
+            rq.onerror = e=>rej(e);
+        });
+    });
+}
+
+function deleteKey(key){
+    return openDb().then(d=>{
+        return new Promise((res,rej)=>{
+            const tx = d.transaction(STORE,'readwrite');
+            const st = tx.objectStore(STORE);
+            const rq = st.delete(key);
+            rq.onsuccess = ()=>res(true);
+            rq.onerror = e=>rej(e);
+        });
+    });
+}
+
+function listKeys(){
+    return openDb().then(d=>{
+        return new Promise((res,rej)=>{
+            const tx = d.transaction(STORE,'readonly');
+            const st = tx.objectStore(STORE);
+            const keys = [];
+            const rq = st.openCursor();
+            rq.onsuccess = e=>{
+                const cur = e.target.result;
+                if(cur){ keys.push(cur.key); cur.continue(); }
+                else res(keys);
+            };
+            rq.onerror = e=>rej(e);
+        });
+    });
+}
+
+// UI elements
+const loginCard   = document.getElementById('loginCard');
+const dashboard   = document.getElementById('dashboard');
+const loginBtn    = document.getElementById('loginBtn');
+const logoutBtn   = document.getElementById('logoutBtn');
+const demoBtn     = document.getElementById('demoBtn');
+const userid      = document.getElementById('userid');
+const password    = document.getElementById('password');
+const pdfFile     = document.getElementById('pdfFile');
+const assocNid    = document.getElementById('assocNid');
+const uploadBtn   = document.getElementById('uploadBtn');
+const uploadMsg   = document.getElementById('uploadMsg');
+const recordList  = document.getElementById('recordList');
+const searchNid   = document.getElementById('searchNid');
+const searchBtn   = document.getElementById('searchBtn');
+const viewerInfo  = document.getElementById('viewerInfo');
+const viewerFrame = document.getElementById('viewerFrame');
+const downloadBtn = document.getElementById('downloadBtn');
+const openNewBtn  = document.getElementById('openNewBtn');
+const loggedUser  = document.getElementById('loggedUser');
+const searchCard  = document.getElementById('searchCard');
+const searchLabel = document.getElementById('searchLabel');
+
+const AUTH_USER = 'admin';
+const AUTH_PASS = '1234';
+
+function setLoggedIn(user){
+    loginCard.style.display = 'none';
+    dashboard.style.display = 'block';
+    loggedUser.textContent = user;
+}
+
+function setLoggedOut(){
+    loginCard.style.display = 'block';
+    dashboard.style.display = 'none';
+}
+
+demoBtn.addEventListener('click', ()=>{
+    userid.value = AUTH_USER;
+    password.value = AUTH_PASS;
+});
+
+loginBtn.addEventListener('click', ()=>{
+    const u = userid.value.trim();
+    const p = password.value.trim();
+    if(u===AUTH_USER && p===AUTH_PASS){
+        setLoggedIn(u);
+        refreshList();
+    } else {
+        alert('ইউজার আইডি বা পাসওয়ার্ড সঠিক নয়');
+    }
+});
+
+logoutBtn.addEventListener('click', setLoggedOut);
+
+uploadBtn.addEventListener('click', async ()=>{
+    uploadMsg.textContent = '';
+    const file = pdfFile.files[0];
+    const nid = assocNid.value.trim();
+    if(!file || !nid){
+        uploadMsg.textContent = 'ফাইল ও NID প্রয়োজন';
+        return;
+    }
+    if(file.type !== 'application/pdf'){
+        uploadMsg.textContent = 'শুধু PDF ফাইল গ্রহণযোগ্য';
+        return;
+    }
+    try{
+        await putBlob(nid, file);
+        uploadMsg.textContent = 'সফলভাবে সংরক্ষিত হয়েছে';
+        assocNid.value = '';
+        pdfFile.value = '';
+        refreshList();
+    }catch(e){
+        console.error(e);
+        uploadMsg.textContent = 'সংরক্ষণে সমস্যা হয়েছে';
+    }
+});
+
+async function refreshList(){
+    recordList.innerHTML = '';
+    const keys = await listKeys();
+    if(keys.length===0){
+        recordList.innerHTML = '<div class="small">কোনো রেকর্ড পাওয়া যায়নি</div>';
+        return;
+    }
+    keys.forEach(k=>{
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${k}</strong><div class="small">NID</div></div><div style="display:flex;gap:8px"><button data-nid="${k}" class="viewRec">দেখুন</button><button data-nid="${k}" class="delRec" style="background:#c62828">মুছুন</button></div></div>`;
+        recordList.appendChild(div);
+    });
+
+    document.querySelectorAll('.viewRec').forEach(b=>b.addEventListener('click', ()=>showByNid(b.dataset.nid)));
+    document.querySelectorAll('.delRec').forEach(b=>b.addEventListener('click', async ()=>{
+        if(confirm('মোছবেন?')){
+            await deleteKey(b.dataset.nid);
+            refreshList();
+        }
+    }));
+}
+
+searchBtn.addEventListener('click', ()=>{
+    const nid = searchNid.value.trim();
+    if(!nid) return alert('NID লিখুন');
+    showByNid(nid);
+});
+
+let currentObjectUrl = null;
+async function showByNid(nid){
+    viewerInfo.textContent = 'লোড হচ্ছে...';
+    clearViewer();
+    try{
+        const blob = await getBlob(nid);
+        if(!blob){
+            viewerInfo.textContent = 'কোনো রেকর্ড পাওয়া যায়নি';
+            return;
+        }
+        const url = URL.createObjectURL(blob);
+        currentObjectUrl = url;
+        viewerInfo.innerHTML = `প্রদর্শিত হচ্ছে: <strong>${nid}</strong>`;
+        downloadBtn.style.display = 'inline-block';
+        openNewBtn.style.display = 'inline-block';
+
+        downloadBtn.onclick = ()=>{
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${nid}.pdf`;
+            a.click();
+        };
+
+        openNewBtn.onclick = ()=>{ window.open(url, '_blank'); };
+
+        viewerFrame.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.frameBorder = '0';
+        viewerFrame.appendChild(iframe);
+    }catch(e){
+        console.error(e);
+        viewerInfo.textContent = 'ভিউতে সমস্যা';
+    }
+}
+
+function clearViewer(){
+    viewerFrame.innerHTML = '';
+    viewerInfo.textContent = '';
+    downloadBtn.style.display = 'none';
+    openNewBtn.style.display = 'none';
+    if(currentObjectUrl){
+        URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+    }
+}
+
+// নতুন অপশন বাটনের লজিক (পপআপ সরানো + সার্চ সেকশনে স্ক্রল + ফোকাস)
+document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        // সার্চ সেকশনে স্ক্রল করুন + ইনপুট ফোকাস করুন
+        searchCard.scrollIntoView({ behavior: 'smooth' });
+        searchNid.focus();
+
+        // সার্ভার/সাইন কপির জন্য লেবেল আপডেট (মেইন ফিচার)
+        const action = btn.dataset.action;
+        if(action === 'server-copy'){
+            searchLabel.textContent = 'সার্ভার কপি ডাউনলোডের জন্য NID সার্চ করুন';
+        } else if(action === 'sign-copy'){
+            searchLabel.textContent = 'সাইন কপি ডাউনলোডের জন্য NID সার্চ করুন';
+        } else {
+            searchLabel.textContent = 'NID দিয়ে সার্চ করুন';
         }
     });
+});
 
-    // ❌ Text selection block (extra protection)
-    document.addEventListener("selectstart", e => e.preventDefault());
-
-    // ❌ Drag block
-    document.addEventListener("dragstart", e => e.preventDefault());
-
-    // ❌ Mobile long press smart block (scroll OK থাকবে)
-    let touchTimer;
-    document.addEventListener("touchstart", function(e) {
-        touchTimer = setTimeout(() => {
-            e.preventDefault();
-        }, 300);
-    });
-
-    document.addEventListener("touchend", function() {
-        clearTimeout(touchTimer);
-    });
+// Init
+openDb().then(()=>console.log('DB ready')).catch(e=>console.error(e));
+setLoggedOut();
 </script>
-
 </body>
 </html>
